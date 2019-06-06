@@ -1,7 +1,7 @@
 const resultDiv = document.querySelector('#result');
 const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
-
+const modalDiv = document.querySelector('#modal'); 
 
 
 const pickRandom = () => {
@@ -10,13 +10,15 @@ const pickRandom = () => {
         .then((response) => resultDiv.innerHTML = `<pre>${JSON.stringify(response, null, 5)}</pre>`);
 };
 
-const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=20`;
+const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
+const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`; 
 
 const handlePageClick = () => {
+	const pageItems = document.querySelectorAll('.page-item');
     let link = event.target;
     let page = link.getAttribute('data-page');
-    console.log(link.getAttribute('data-page'));
     beerPage(page);
+    pageItems.forEach((item) => item.classList.remove("active"));
 }
 
 const beerPage = (page) => {
@@ -25,49 +27,96 @@ const beerPage = (page) => {
         .then((response) => {
             cardsDiv.innerHTML = '';
             beerCard(response);
+            document.querySelector(`.page-link[data-page='${page}']`).parentElement.classList.add('active');
+            document.querySelectorAll('.beerDetail').forEach(bd => bd.addEventListener('click', (e) => showModal(e.target.getAttribute('data-id'))));
+			console.log(document.querySelectorAll('.beerDetail')); 
+        }
+        )
+};
+
+const showModal = (id) => {
+	fetch(beerLink(id))
+        .then((response) => response.json()) 
+        .then((response) => {
+
+            modalDiv.innerHTML = `
+				<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+				  <div class="modal-dialog modal-dialog-scrollable" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="exampleModalScrollableTitle">${response[0].name}</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        ...
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				        <button type="button" class="btn btn-primary">Save changes</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+            `; 
+
+            
+
+
+
+            // beerCard(response);
+            // document.querySelector(`.page-link[data-page='${page}']`).parentElement.classList.add('active');
         }
         )
 };
 
 const beerCard = (response) => {
+
     for (let i = 0; i < response.length; i++) {
+
+    	let imageSrc = response[i].image_url;
+    	if (imageSrc == null) {
+    		imageSrc = "no-image.png"; 
+    	}
+
+    	let beerName = response[i].name;
+    	if (beerName == "" || beerName == null) {
+    		beerName = ""; 
+    	}
+
+    	let beerTag = response[i].tagline;
+    	if (beerTag == "" || beerName == null) {
+    		beerTag = ""; 
+    	}
+
+      	let beerDesc = response[i].description;
+    	if (beerDesc == "" || beerDesc == null) {
+    		beerDesc = ""; 
+    	}  	
+
         cardsDiv.innerHTML += `
 				<div class="card" style="max-width: 200px; max-height: " >
-                <img class="card-img-top" style="max-width: 100%;" src="${response[i].image_url}" alt="${response[i].name}">
+                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				  <div class="card-body">
-                  <h5 class="card-title">${response[i].name}</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">${response[i].tagline}</h6>
-                  <p class="card-text">${response[i].description}</p>
+                  <h5 class="card-title">${beerName}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
+                  <p class="card-text">${beerDesc}</p>
+                  <button type="button" class="btn btn-primary beerDetail" data-toggle="modal" data-target="#${response[i].id}"
+                  data-id="${response[i].id}">Show me more</button>
 				  </div>
-                  </div>
+                </div>
                   `;
     }
 };
 
 
-beerPage(5);
+beerPage(3);
 
-const paginate = (page) => {
-    let previous = `<li class="page-item"><span class="page-link" data-page="${page - 1}">${page - 1}</span></li>`;
-
-    page == 1 ? previous = '' : previous;
-
-    let current = `<li class="page-item"><span class="page-link" data-page="${page}">${page}</span></li>`;
-    pagination.innerHTML = `${previous}${current}`;
-
-
-    // page = 1 ? previous =
-    //     pagination.innerHTML = `
-
-    // <li class="page-item"><a class="page-link" href="#">1</a></li>
-    // <li class="page-item"><a class="page-link" href="#">2</a></li>
-    // <li class="page-item"><a class="page-link" href="#">3</a></li>
-    // <li class="page-item">
-    //     <a class="page-link" href="#" aria-label="Next">
-    //         <span aria-hidden="true">&raquo;</span>
-    //     </a>
-    // </li>
-    // `;
+const paginate = () => {
+	for (let i = 1; i <= 5; i++) {
+		pagination.innerHTML += `<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
+	}
 
     let pageLinks = document.querySelectorAll('.page-link');
 
@@ -79,17 +128,3 @@ const paginate = (page) => {
 paginate(3);
 
 document.querySelector('#pickRandom').addEventListener('click', pickRandom);
-
-/* <li class="page-item">
-    <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-    </a>
-</li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item"><a class="page-link" href="#">2</a></li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-        <a class="page-link" href="#" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-        </a>
-    </li> */

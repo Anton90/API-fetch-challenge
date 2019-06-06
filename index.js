@@ -16,16 +16,22 @@ const handlePageClick = () => {
     let link = event.target;
     let page = link.getAttribute('data-page');
     console.log(link.getAttribute('data-page'));
-    cardsDiv.innerHTML = beerCard(page);
+    beerPage(page);
 }
 
-
-const beerCard = (page) => {
+const beerPage = (page) => {
     fetch(pageLink(page))
         .then((response) => response.json())
         .then((response) => {
-            for (let i = 0; i < response.length; i++) {
-                cardsDiv.innerHTML += `
+            cardsDiv.innerHTML = '';
+            beerCard(response);
+        }
+        )
+};
+
+const beerCard = (response) => {
+    for (let i = 0; i < response.length; i++) {
+        cardsDiv.innerHTML += `
 				<div class="card" style="max-width: 200px; max-height: " >
                 <img class="card-img-top" style="max-width: 100%;" src="${response[i].image_url}" alt="${response[i].name}">
 				  <div class="card-body">
@@ -35,21 +41,21 @@ const beerCard = (page) => {
 				  </div>
                   </div>
                   `;
-            }
-        }
-        )
+    }
 };
 
 
-beerCard(5);
+beerPage(5);
 
 const paginate = (page) => {
-    let previous = `<li class="page-item">< a class="page-link" href = "" aria - label="Previous" >
-            <span aria-hidden="true">&laquo;</span>
-            </a >
-            </li >`;
+    let previous = `<li class="page-item"><span class="page-link" data-page="${page - 1}">${page - 1}</span></li>`;
 
-    pagination.innerHTML = `<li class="page-item"><span class="page-link" data-page="${page}">${page}</span></li>`;
+    page == 1 ? previous = '' : previous;
+
+    let current = `<li class="page-item"><span class="page-link" data-page="${page}">${page}</span></li>`;
+    pagination.innerHTML = `${previous}${current}`;
+
+
     // page = 1 ? previous =
     //     pagination.innerHTML = `
 

@@ -45,15 +45,6 @@ const handlePageClick = () =>
 	pageItems.forEach((item) => item.classList.remove("active"));
 }
 
-
-
-// Function to create empty modal containers
-const makeModalContainer = (id) =>
-{
-	modalDiv.innerHTML +=
-		`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true"></div>`;
-};
-
 // Function to collect info for modal and construct corresponding html
 const showModal = (id) =>
 {
@@ -62,7 +53,8 @@ const showModal = (id) =>
 		.then((response) => response.json())
 		.then((response) =>
 		{
-			targetModal.innerHTML = `
+			modalDiv.innerHTML +=
+				`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-scrollable" role="document">
 					<div class="modal-content">
 				   	<div class="modal-header">
@@ -78,7 +70,8 @@ const showModal = (id) =>
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						</div>
 					</div>
-				</div>`;
+				</div>
+			</div>`;
 		})
 	return;
 };
@@ -143,8 +136,6 @@ const beerCard = (response) =>
                   <button type="button" class="btn btn-primary beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
 				  </div>
         </div>`;
-
-		makeModalContainer(response[i].id);
 	}
 };
 

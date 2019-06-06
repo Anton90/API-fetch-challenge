@@ -11,6 +11,7 @@ const pickRandom = () => {
 };
 
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
+
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
 const handlePageClick = () => {
@@ -28,21 +29,23 @@ const beerPage = (page) => {
 			cardsDiv.innerHTML = '';
 			beerCard(response);
 			document.querySelector(`.page-link[data-page='${page}']`).parentElement.classList.add('active');
-			document.querySelectorAll('.beerDetail').forEach(bd => bd.addEventListener('click', (e) => showModal(e.target.getAttribute('data-id'))));
+			// document.querySelectorAll('.beerDetail').forEach(bd => bd.addEventListener('click', (e) => showModal(e.target.getAttribute('data-id'))));
 		}
 		)
 };
 
 const makeModalContainer = (id) => {
-	modalDiv.innerHTML += `<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true"></div>`;
-};
-
-const showModal = (id) => {
-	let targetModal = document.querySelector(`#${id}`);
+	let newModal = document.createElement('div');
+	newModal.setAttribute('class', 'modal fade');
+	newModal.id = id;
+	newModal.tabIndex = "-1";
+	newModal.setAttribute('role', 'dialog');
+	newModal.setAttribute('aria-labelledby', 'ModalScrollableTitle');
+	newModal.setAttribute('aria-hidden', 'true');
 	fetch(beerLink(id))
 		.then((response) => response.json())
 		.then((response) => {
-			targetModal.innerHTML = `				
+			newModal.innerHTML = `				
 				  <div class="modal-dialog modal-dialog-scrollable" role="document">
 				    <div class="modal-content">
 				      <div class="modal-header">
@@ -59,11 +62,41 @@ const showModal = (id) => {
 	        <button type="button" class="btn btn-primary">Save changes</button>
 				      </div>
 	    </div>
-	  </div>
-		        `;
+	  </div>`;
 		}
 		)
+	modalDiv.appendChild(newModal);
+	//modalDiv.innerHTML += `<div class="modal fade" id="${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true"></div>`;
 };
+
+// const showModal = (id) => {
+// 	//let targetModal = document.querySelector(`#${id}`);
+// 	// fetch(beerLink(id))
+// 	// 	.then((response) => response.json())
+// 	// 	.then((response) => {
+// 	// 		targetModal.innerHTML = `				
+// 	// 			  <div class="modal-dialog modal-dialog-scrollable" role="document">
+// 	// 			    <div class="modal-content">
+// 	// 			      <div class="modal-header">
+// 	//     <h5 class="modal-title" id="exampleModalScrollableTitle">${response[0].name}</h5>
+// 	//       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+// 	// 			          <span aria-hidden="true">&times;</span>
+// 	// 			        </button>
+// 	// 			      </div>
+// 	// 			      <div class="modal-body">
+// 	// 			        ...
+// 	// 			      </div>
+// 	//       <div class="modal-footer">
+// 	// 			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+// 	//         <button type="button" class="btn btn-primary">Save changes</button>
+// 	// 			      </div>
+// 	//     </div>
+// 	//   </div>
+// 	// 	        `;
+// 	// 	}
+// 	// 	)
+// 	return;
+// };
 
 const beerCard = (response) => {
 
@@ -96,11 +129,9 @@ const beerCard = (response) => {
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
                   <p class="card-text">${beerDesc}</p>
-                  <button type="button" class="btn btn-primary beerDetail" data-toggle="modal" data-target="#${response[i].id}"
-                  data-id="${response[i].id}">Show me more</button>
+                  <button type="button" class="btn btn-primary beerDetail" data-toggle="modal" data-target="#${response[i].id}" data-id="${response[i].id}">Show me more</button>
 				  </div>
-                </div>
-									`;
+        </div>`;
 
 		makeModalContainer(response[i].id);
 	}
@@ -110,6 +141,7 @@ const beerCard = (response) => {
 beerPage(3);
 
 const paginate = () => {
+
 	for (let i = 1; i <= 5; i++) {
 		pagination.innerHTML += `<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
 	}
@@ -117,7 +149,6 @@ const paginate = () => {
 	let pageLinks = document.querySelectorAll('.page-link');
 
 	pageLinks.forEach(link => link.addEventListener('click', handlePageClick))
-
 
 };
 

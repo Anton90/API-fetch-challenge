@@ -130,7 +130,7 @@ let allBeers = [];
 let allBeersCounter = 1;
 const getAllBeers = async () => {
 	let id = 1;
-	while (allBeersCounter != 404) {
+	while (allBeersCounter != 'STOP') {
 		try {
 			let result = fetch(beerLink(id));
 			let data = await result;
@@ -141,7 +141,7 @@ const getAllBeers = async () => {
 			allBeersCounter = jsonData[0].id;
 		}
 		catch (err) {
-			allBeersCounter = 404;
+			allBeersCounter = 'STOP';
 			console.log(`STOP ${err}`);
 		}
 	}
@@ -161,3 +161,12 @@ const init = () => {
 init();
 
 
+const sorter = (criterion, a, b) => {
+	if (a.criterion > b.criterion) {
+		return 1;
+	}
+	if (a.criterion > b.criterion) {
+		return -1;
+	}
+	return 0;
+};

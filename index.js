@@ -184,7 +184,7 @@ const beerCard = (response) =>
 //Function for random beercard
 const randomBeer = () =>
 {
-	let rand = Math.floor(Math.random() * 325);
+	let rand = Math.floor(Math.random() * data.length);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
@@ -220,9 +220,10 @@ const randomBeer = () =>
 			}
 
 			resultDiv.innerHTML = `
-			<div class="card m-2" style="max-width: 400px; max-height: " >
-                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
+			<div class="card m-2" style="max-width: 400px;">
+                <img class="card-img-top mt-4" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				<div class="card-body d-flex flex-column">
+						<h4>Your Lucky number: ${rand}</h4>
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
                   <p class="card-text">${beerDesc}</p>

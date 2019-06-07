@@ -4,6 +4,7 @@ const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
 
+
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
@@ -17,8 +18,8 @@ const pickRandom = () =>
 			`<pre>${JSON.stringify(response, null, 5)}</pre>`);
 };
 
-document.querySelector('#pickRandom')
-	.addEventListener('click', pickRandom);
+//document.querySelector('#pickRandom')
+	//.addEventListener('click', randomBeer);
 
 const paginate = () =>
 {
@@ -54,13 +55,12 @@ const modalInfo = (response) => {
 
 			if (value != null || value != "" || typeof(value) !== undefined) {
 		  		
-				  	if (typeof(value) === 'object'){
-				  		buffer += `<li><b>${key}:</b>`;
-				  		buffer += `${modalInfo(value)}</li>`;
-				  	}else {
-				  		buffer += `<li><b>${key}</b>: ${value}</li>`; 
-				  	}
-
+			  	if (typeof(value) === 'object'){
+			  		buffer += `<li><b>${key}:</b>`;
+			  		buffer += `${modalInfo(value)}</li>`;
+			  	} else {
+			  		buffer += `<li><b>${key}</b>: ${value}</li>`; 
+			  	}
 			}
 		}
 	}
@@ -126,45 +126,98 @@ const beerCard = (response) =>
 	for (let i = 0; i < response.length; i++)
 	{
 
-		let imageSrc = response[i].image_url;
+	let imageSrc = response[i].image_url;
 		if (imageSrc == null)
 		{
 			imageSrc = "no-image.png";
 		}
 
-		let beerName = response[i].name;
+	let beerName = response[i].name;
 		if (beerName == "" || beerName == null)
 		{
 			beerName = "";
 		}
 
-		let beerTag = response[i].tagline;
+	let beerTag = response[i].tagline;
 		if (beerTag == "" || beerName == null)
 		{
 			beerTag = "";
 		}
 
-		let beerDesc = response[i].description;
+	let beerDesc = response[i].description;
 		if (beerDesc == "" || beerDesc == null)
 		{
 			beerDesc = "";
 		}
 
 		cardsDiv.innerHTML += `
-				<div class="card m-3" style="max-width: 200px; max-height: " >
+			<div class="card m-2" style="max-width: 200px; max-height: " >
                 <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
-				  <div class="card-body d-flex flex-column">
+				<div class="card-body d-flex flex-column">
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
                   <p class="card-text">${beerDesc}</p>
                   <button type="button" class="btn btn-primary mt-auto beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
-				  </div>
-        </div>`;
+				</div>
+        	</div>`;
 	}
 };
 
+const randomBeer = () => {
+	let rand = Math.floor(Math.random() * 325);
+
+	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
+		.then((response) => response.json())
+		.then((response) => {
+
+	// 		beerCard(response); 
+			console.log(response);
 
 
+	let imageSrc = response[0].image_url;
+		if (imageSrc == null)
+		{
+			imageSrc = "no-image.png";
+		}
+
+	let beerName = response[0].name;
+		if (beerName == "" || beerName == null)
+		{
+			beerName = "";
+		}
+
+	let beerTag = response[0].tagline;
+		if (beerTag == "" || beerName == null)
+		{
+			beerTag = "";
+		}
+
+	let beerDesc = response[0].description;
+		if (beerDesc == "" || beerDesc == null)
+		{
+			beerDesc = "";
+		}
+
+		resultDiv.innerHTML = `
+			<div class="card m-2" style="max-width: 400px; max-height: " >
+                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
+				<div class="card-body d-flex flex-column">
+                  <h5 class="card-title">${beerName}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
+                  <p class="card-text">${beerDesc}</p>
+                  <button type="button" class="btn btn-primary mt-auto beerDetail" data-toggle="modal" data-target="#b${response[0].id}" data-id="${response[0].id}">Show me more</button>
+				</div>
+        	</div>`;
+
+        document.querySelector('.beerDetail').addEventListener('click', (e) => 
+        	showModal(e.target.getAttribute('data-id')));
+
+})
+}
+
+document.querySelector('#pickRandom').addEventListener('click', randomBeer);
+
+document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
 
 // Now do it!
 const init = () =>

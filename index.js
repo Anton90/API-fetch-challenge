@@ -55,7 +55,7 @@ const modalInfo = (response) => {
 			if (value != null || value != "" || typeof(value) !== undefined) {
 		  		
 				  	if (typeof(value) === 'object'){
-				  		buffer += `<li>${key}:`;
+				  		buffer += `<li><b>${key}:</b>`;
 				  		buffer += `${modalInfo(value)}</li>`;
 				  	}else {
 				  		buffer += `<li><b>${key}</b>: ${value}</li>`; 

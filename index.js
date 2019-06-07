@@ -163,6 +163,7 @@ const beerCard = (response) =>
 	}
 };
 
+//Function for random beercard
 const randomBeer = () => {
 	let rand = Math.floor(Math.random() * 325);
 
@@ -216,7 +217,6 @@ const randomBeer = () => {
 }
 
 document.querySelector('#pickRandom').addEventListener('click', randomBeer);
-
 document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
 
 // Now do it!

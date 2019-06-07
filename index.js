@@ -12,7 +12,7 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 // data container and related
 let data = [];
 let sortingOrder = 'name';
-
+const pageLen = 12;
 
 // Utility functions for user interaction
 // const pickRandom = () => {
@@ -25,10 +25,12 @@ let sortingOrder = 'name';
 //document.querySelector('#pickRandom')
 //.addEventListener('click', randomBeer);
 
-const pageLen = 20;
-const paginate = (data, page) => {
+
+const paginate = (data, page) =>
+{
 	let total = data.length;
-	for (let i = 1; i <= Math.ceil(total / pageLen); i++) {
+	for (let i = 1; i <= Math.ceil(total / pageLen); i++)
+	{
 		pagination.innerHTML +=
 			`<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
 	}
@@ -42,7 +44,8 @@ const paginate = (data, page) => {
 };
 
 
-const handlePageClick = () => {
+const handlePageClick = () =>
+{
 	const pageItems = document.querySelectorAll('.page-item');
 	let link = event.target;
 	let page = link.getAttribute('data-page');
@@ -52,19 +55,26 @@ const handlePageClick = () => {
 		.parentElement.classList.add('active');
 }
 //Function to display all key/values
-const modalInfo = (response) => {
+const modalInfo = (response) =>
+{
 	let buffer = `<ul>`;
 	console.log(response);
 
-	if (response != null) {
-		for (let [key, value] of Object.entries(response)) {
+	if (response != null)
+	{
+		for (let [key, value] of Object.entries(response))
+		{
 
-			if (value != null || value != "" || typeof (value) !== undefined) {
+			if (value != null || value != "" || typeof (value) !== undefined)
+			{
 
-				if (typeof (value) === 'object') {
+				if (typeof (value) === 'object')
+				{
 					buffer += `<li><b>${key}:</b>`;
 					buffer += `${modalInfo(value)}</li>`;
-				} else {
+				}
+				else
+				{
 					buffer += `<li><b>${key}</b>: ${value}</li>`;
 				}
 			}
@@ -76,11 +86,13 @@ const modalInfo = (response) => {
 
 
 // Function to collect info for modal and construct corresponding html
-const showModal = (id) => {
+const showModal = (id) =>
+{
 	let targetModal = document.querySelector(`#b${id}`);
 	fetch(beerLink(id))
 		.then((response) => response.json())
-		.then((response) => {
+		.then((response) =>
+		{
 			modalDiv.innerHTML +=
 				`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -107,11 +119,12 @@ const showModal = (id) => {
 
 
 // Function to generate main page content
-const beerPage = (data, page) => {
+const beerPage = (data, page) =>
+{
 
 	cardsDiv.innerHTML = '';
 	let begin = (page - 1) * pageLen;
-	let end = page * pageLen - 1;
+	let end = page * pageLen;
 	let subset = data.slice(begin, end);
 	console.log(subset);
 	beerCard(subset);
@@ -123,34 +136,40 @@ const beerPage = (data, page) => {
 };
 
 // Function to construct a card for a beer
-const beerCard = (response) => {
+const beerCard = (response) =>
+{
 	console.log(response[0]);
-	for (let i = 0; i < response.length; i++) {
+	for (let i = 0; i < response.length; i++)
+	{
 
 		let imageSrc = response[i].image_url;
-		if (imageSrc == null) {
+		if (imageSrc == null)
+		{
 			imageSrc = "no-image.png";
 		}
 
 		let beerName = response[i].name;
-		if (beerName == "" || beerName == null) {
+		if (beerName == "" || beerName == null)
+		{
 			beerName = "";
 		}
 
 		let beerTag = response[i].tagline;
-		if (beerTag == "" || beerName == null) {
+		if (beerTag == "" || beerName == null)
+		{
 			beerTag = "";
 		}
 
 		let beerDesc = response[i].description;
-		if (beerDesc == "" || beerDesc == null) {
+		if (beerDesc == "" || beerDesc == null)
+		{
 
 			beerDesc = "";
 		}
 
 		cardsDiv.innerHTML += `
-			<div class="card m-2" style="max-width: 200px; max-height: " >
-                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
+			<div class="card m-2" style="max-width: 400px;" >
+                <img class="card-img-top mt-4" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				<div class="card-body d-flex flex-column">
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
@@ -163,34 +182,40 @@ const beerCard = (response) => {
 
 
 //Function for random beercard
-const randomBeer = () => {
+const randomBeer = () =>
+{
 	let rand = Math.floor(Math.random() * 325);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
-		.then((response) => {
+		.then((response) =>
+		{
 
-			// 		beerCard(response); 
+			// 		beerCard(response);
 			console.log(response);
 
 
 			let imageSrc = response[0].image_url;
-			if (imageSrc == null) {
+			if (imageSrc == null)
+			{
 				imageSrc = "no-image.png";
 			}
 
 			let beerName = response[0].name;
-			if (beerName == "" || beerName == null) {
+			if (beerName == "" || beerName == null)
+			{
 				beerName = "";
 			}
 
 			let beerTag = response[0].tagline;
-			if (beerTag == "" || beerName == null) {
+			if (beerTag == "" || beerName == null)
+			{
 				beerTag = "";
 			}
 
 			let beerDesc = response[0].description;
-			if (beerDesc == "" || beerDesc == null) {
+			if (beerDesc == "" || beerDesc == null)
+			{
 				beerDesc = "";
 			}
 
@@ -205,19 +230,23 @@ const randomBeer = () => {
 				</div>
         	</div>`;
 
-			document.querySelector('.beerDetail').addEventListener('click', (e) =>
-				showModal(e.target.getAttribute('data-id')));
+			document.querySelector('.beerDetail')
+				.addEventListener('click', (e) =>
+					showModal(e.target.getAttribute('data-id')));
 
 		})
 }
 
 
-const getAllBeers = async () => {
+const getAllBeers = async () =>
+{
 	let allBeers = [];
 	let allBeersCounter = 1;
 	let id = 1;
-	while (allBeersCounter != 'STOP') {
-		try {
+	while (allBeersCounter != 'STOP')
+	{
+		try
+		{
 			let result = fetch(pageLink(id));
 			let data = await result;
 			let jsonData = await data.json();
@@ -227,7 +256,8 @@ const getAllBeers = async () => {
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}
-		catch (err) {
+		catch (err)
+		{
 			allBeersCounter = 'STOP';
 			console.log(`STOP ${err}`);
 		}
@@ -235,11 +265,14 @@ const getAllBeers = async () => {
 	return allBeers;
 }
 
-document.querySelector('#pickRandom').addEventListener('click', randomBeer);
-document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
+document.querySelector('#pickRandom')
+	.addEventListener('click', randomBeer);
+document.querySelector('#reset')
+	.addEventListener('click', () => resultDiv.innerHTML = "")
 
 // Now do it!
-const init = async () => {
+const init = async () =>
+{
 
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
@@ -247,7 +280,8 @@ const init = async () => {
 	buildPage();
 };
 
-const buildPage = () => {
+const buildPage = () =>
+{
 	let page = 1;
 	data.sort(sorter);
 	paginate(data, page);
@@ -259,14 +293,17 @@ const buildPage = () => {
 init();
 
 
-const sorter = (a, b) => {
+const sorter = (a, b) =>
+{
 	console.log("A: " + a[sortingOrder]);
 	console.log("B: " + b[sortingOrder]);
 
-	if (a[sortingOrder] > b[sortingOrder]) {
+	if (a[sortingOrder] > b[sortingOrder])
+	{
 		return 1;
 	}
-	if (a[sortingOrder] < b[sortingOrder]) {
+	if (a[sortingOrder] < b[sortingOrder])
+	{
 		return -1;
 	}
 	return 0;

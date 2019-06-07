@@ -9,6 +9,9 @@ const modalDiv = document.querySelector('#modal');
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
+// data container
+let data = [];
+
 
 // Utility functions for user interaction
 // const pickRandom = () => {
@@ -19,16 +22,19 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 // };
 
 //document.querySelector('#pickRandom')
-	//.addEventListener('click', randomBeer);
+//.addEventListener('click', randomBeer);
 
-const paginate = () => {
-
-	for (let i = 1; i <= 5; i++) {
+const pageLen = 20;
+const paginate = (data, page) => {
+	let total = data.length;
+	for (let i = 1; i <= Math.ceil(total / pageLen); i++) {
 		pagination.innerHTML +=
 			`<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
 	}
 
 	let pageLinks = document.querySelectorAll('.page-link');
+	document.querySelector(`.page-link[data-page='${page}']`)
+		.parentElement.classList.add('active');
 
 	pageLinks.forEach(link => link.addEventListener('click', handlePageClick))
 
@@ -39,30 +45,32 @@ const handlePageClick = () => {
 	const pageItems = document.querySelectorAll('.page-item');
 	let link = event.target;
 	let page = link.getAttribute('data-page');
-	beerPage(page);
+	beerPage(data, page);
 	pageItems.forEach((item) => item.classList.remove("active"));
+	document.querySelector(`.page-link[data-page='${page}']`)
+		.parentElement.classList.add('active');
 }
 //Function to display all key/values
 const modalInfo = (response) => {
-	let buffer = `<ul>`; 
+	let buffer = `<ul>`;
 	console.log(response);
 
-	if (response != null ) {
+	if (response != null) {
 		for (let [key, value] of Object.entries(response)) {
 
-			if (value != null || value != "" || typeof(value) !== undefined) {
-		  		
-			  	if (typeof(value) === 'object'){
-			  		buffer += `<li><b>${key}:</b>`;
-			  		buffer += `${modalInfo(value)}</li>`;
-			  	} else {
-			  		buffer += `<li><b>${key}</b>: ${value}</li>`; 
-			  	}
+			if (value != null || value != "" || typeof (value) !== undefined) {
+
+				if (typeof (value) === 'object') {
+					buffer += `<li><b>${key}:</b>`;
+					buffer += `${modalInfo(value)}</li>`;
+				} else {
+					buffer += `<li><b>${key}</b>: ${value}</li>`;
+				}
 			}
 		}
 	}
 	buffer += `</ul>`
-	return buffer; 
+	return buffer;
 }
 
 
@@ -98,46 +106,44 @@ const showModal = (id) => {
 
 
 // Function to generate main page content
-const beerPage = (page) => {
-	fetch(pageLink(page))
-		.then((response) => response.json())
-		.then((response) => {
-			cardsDiv.innerHTML = '';
-			beerCard(response);
-			document.querySelector(`.page-link[data-page='${page}']`)
-				.parentElement.classList.add('active');
-			document.querySelectorAll('.beerDetail')
-				.forEach(bd => bd.addEventListener('click', (e) => showModal(e.target
-					.getAttribute('data-id'))));
-		})
+const beerPage = (data, page) => {
+
+	cardsDiv.innerHTML = '';
+	let begin = (page - 1) * pageLen;
+	let end = page * pageLen - 1;
+	let subset = data.slice(begin, end);
+	console.log(subset);
+	beerCard(subset);
+
+
+	document.querySelectorAll('.beerDetail')
+		.forEach(bd => bd.addEventListener('click', (e) => showModal(e.target
+			.getAttribute('data-id'))));
+
 };
 
 // Function to construct a card for a beer
 const beerCard = (response) => {
-
+	console.log(response[0]);
 	for (let i = 0; i < response.length; i++) {
 
-	let imageSrc = response[i].image_url;
-		if (imageSrc == null)
-		{
+		let imageSrc = response[i].image_url;
+		if (imageSrc == null) {
 			imageSrc = "no-image.png";
 		}
 
-	let beerName = response[i].name;
-		if (beerName == "" || beerName == null)
-		{
+		let beerName = response[i].name;
+		if (beerName == "" || beerName == null) {
 			beerName = "";
 		}
 
-	let beerTag = response[i].tagline;
-		if (beerTag == "" || beerName == null)
-		{
+		let beerTag = response[i].tagline;
+		if (beerTag == "" || beerName == null) {
 			beerTag = "";
 		}
 
-	let beerDesc = response[i].description;
-		if (beerDesc == "" || beerDesc == null)
-		{
+		let beerDesc = response[i].description;
+		if (beerDesc == "" || beerDesc == null) {
 
 			beerDesc = "";
 		}
@@ -164,35 +170,31 @@ const randomBeer = () => {
 		.then((response) => response.json())
 		.then((response) => {
 
-	// 		beerCard(response); 
+			// 		beerCard(response); 
 			console.log(response);
 
 
-	let imageSrc = response[0].image_url;
-		if (imageSrc == null)
-		{
-			imageSrc = "no-image.png";
-		}
+			let imageSrc = response[0].image_url;
+			if (imageSrc == null) {
+				imageSrc = "no-image.png";
+			}
 
-	let beerName = response[0].name;
-		if (beerName == "" || beerName == null)
-		{
-			beerName = "";
-		}
+			let beerName = response[0].name;
+			if (beerName == "" || beerName == null) {
+				beerName = "";
+			}
 
-	let beerTag = response[0].tagline;
-		if (beerTag == "" || beerName == null)
-		{
-			beerTag = "";
-		}
+			let beerTag = response[0].tagline;
+			if (beerTag == "" || beerName == null) {
+				beerTag = "";
+			}
 
-	let beerDesc = response[0].description;
-		if (beerDesc == "" || beerDesc == null)
-		{
-			beerDesc = "";
-		}
+			let beerDesc = response[0].description;
+			if (beerDesc == "" || beerDesc == null) {
+				beerDesc = "";
+			}
 
-		resultDiv.innerHTML = `
+			resultDiv.innerHTML = `
 			<div class="card m-2" style="max-width: 400px; max-height: " >
                 <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				<div class="card-body d-flex flex-column">
@@ -203,10 +205,10 @@ const randomBeer = () => {
 				</div>
         	</div>`;
 
-        document.querySelector('.beerDetail').addEventListener('click', (e) => 
-        	showModal(e.target.getAttribute('data-id')));
+			document.querySelector('.beerDetail').addEventListener('click', (e) =>
+				showModal(e.target.getAttribute('data-id')));
 
-})
+		})
 }
 
 
@@ -233,19 +235,35 @@ const getAllBeers = async () => {
 } 
 
 
+
 document.querySelector('#pickRandom').addEventListener('click', randomBeer);
 document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
 
 // Now do it!
-const init = () => {
-	let page = 1;
-	paginate(page);
-	beerPage(page);
+const init = async () => {
 
-	getAllBeers();
-	//console.log(allBeers);
+	let page = 1;
+
+	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
+
+	data = await getAllBeers();
+
+	paginate(data, page);
+	beerPage(data, page);
+
+	console.log(data);
+
 };
 
 init();
 
 
+const sorter = (criterion, a, b) => {
+	if (a.criterion > b.criterion) {
+		return 1;
+	}
+	if (a.criterion > b.criterion) {
+		return -1;
+	}
+	return 0;
+};

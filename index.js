@@ -3,14 +3,8 @@ const resultDiv = document.querySelector('#result');
 const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
+const sortDropdown = document.querySelector("#dropdown");
 
-const selectArray = [
-	"name",
-	"abv",
-	'ph',
-	"hops",
-	"food-pairing"
-]; 
 
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
@@ -18,21 +12,25 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
 // data container and related
 let data = [];
-let sortingOrder = 'name';
+let sortingOrder = '';
+let selectArray = [
+	"name",
+	"abv",
+	"ebc",
+	"ph"
+];
 
 
-// Utility functions for user interaction
-// const pickRandom = () => {
-// 	fetch('https://api.punkapi.com/v2/beers/random')
-// 		.then((response) => response.json())
-// 		.then((response) => resultDiv.innerHTML =
-// 			`<pre>${JSON.stringify(response, null, 5)}</pre>`);
-// };
+// const fillSelectArray = () => {
 
-//document.querySelector('#pickRandom')
-//.addEventListener('click', randomBeer);
+// 	data.forEach(item => selectArray.push(item.id)); 
+// 	console.log(data); 
+// } 
 
-const pageLen = 20;
+
+ 
+
+const pageLen = 50;
 const paginate = (data, page) => {
 	let total = data.length;
 	for (let i = 1; i <= Math.ceil(total / pageLen); i++) {
@@ -59,17 +57,32 @@ const handlePageClick = () => {
 		.parentElement.classList.add('active');
 }
 
+//Function to capitalize first letter for dropdown menu
+const uCFirst = sentence => {
+  let words = sentence.split(" ");
+  words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
+  return words.join(" ");
+};
+
+//Function to sort items
+const addSortItems = () => {
+	selectArray.forEach(item => {
+		sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
+	}) 
+};
+
+addSortItems(); 
 
 const handleSortClick = () => {
-	sortingOrder = event.target.value; 
+	sortingOrder = event.srcElement.id;  
+	buildPage(); 
 }
 
-document.querySelector('#dropdown').addEventListener('click', handleSortClick);
 
 //Function to display all key/values
 const modalInfo = (response) => {
 	let buffer = `<ul>`;
-	console.log(response);
+	//console.log(response);
 
 	if (response != null) {
 		for (let [key, value] of Object.entries(response)) {
@@ -127,7 +140,7 @@ const beerPage = (data, page) => {
 	let begin = (page - 1) * pageLen;
 	let end = page * pageLen - 1;
 	let subset = data.slice(begin, end);
-	console.log(subset);
+	//console.log(subset);
 	beerCard(subset);
 
 	document.querySelectorAll('.beerDetail')
@@ -138,7 +151,7 @@ const beerPage = (data, page) => {
 
 // Function to construct a card for a beer
 const beerCard = (response) => {
-	console.log(response[0]);
+	//console.log(response[0]);
 	for (let i = 0; i < response.length; i++) {
 
 		let imageSrc = response[i].image_url;
@@ -178,13 +191,13 @@ const beerCard = (response) => {
 
 //Function for random beercard
 const randomBeer = () => {
-	let rand = Math.floor(Math.random() * allBeers.length);
+	let rand = Math.floor(Math.random() * data.length);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
 		.then((response) => {
 
-			// 		beerCard(response); 
+			//beerCard(response); 
 			console.log(response);
 
 
@@ -247,31 +260,30 @@ const getAllBeers = async () => {
 	return allBeers; 
 } 
 
-// const filter = () => {
-// 	selectArray.forEach
-// }
-
 
 
 document.querySelector('#pickRandom').addEventListener('click', randomBeer);
 document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
+dropdown.addEventListener('click', handleSortClick);
+
 
 // Now do it!
 const init = async () => {
-
+	let page = 1;
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
 	data = await getAllBeers();
+	paginate(data, page);
 	buildPage();
 };
+
 
 const buildPage = () => {
 	let page = 1;
 	data.sort(sorter);
-	paginate(data, page);
 	beerPage(data, page);
 
-	console.log(data);
+	//console.log(data);
 
 };
 
@@ -280,8 +292,9 @@ init();
 
 
 const sorter = (a, b) => {
-	console.log("A: " + a[sortingOrder]);
-	console.log("B: " + b[sortingOrder]);
+	//console.log("A: " + a[sortingOrder]);
+	//console.log("B: " + b[sortingOrder]);
+	//console.log(sortingOrder); 
 
 	if (a[sortingOrder] > b[sortingOrder]) {
 		return 1;
@@ -291,3 +304,4 @@ const sorter = (a, b) => {
 	}
 	return 0;
 };
+ 

@@ -44,6 +44,30 @@ const handlePageClick = () =>
 	beerPage(page);
 	pageItems.forEach((item) => item.classList.remove("active"));
 }
+//Function to display all key/values
+const modalInfo = (response) => {
+	let buffer = `<ul>`; 
+	console.log(response);
+
+	if (response != null ) {
+		for (let [key, value] of Object.entries(response)) {
+
+			if (value != null || value != "" || typeof(value) !== undefined) {
+		  		
+				  	if (typeof(value) === 'object'){
+				  		buffer += `<li>${key}:`;
+				  		buffer += `${modalInfo(value)}</li>`;
+				  	}else {
+				  		buffer += `<li><b>${key}</b>: ${value}</li>`; 
+				  	}
+
+			}
+		}
+	}
+	buffer += `</ul>`
+	return buffer; 
+}
+
 
 // Function to collect info for modal and construct corresponding html
 const showModal = (id) =>
@@ -64,7 +88,7 @@ const showModal = (id) =>
 				        	</button>
 				      </div>
 				      <div class="modal-body">
-				        ...
+				        ${modalInfo(response[0])}
 				      </div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -127,13 +151,13 @@ const beerCard = (response) =>
 		}
 
 		cardsDiv.innerHTML += `
-				<div class="card" style="max-width: 200px; max-height: " >
+				<div class="card m-3" style="max-width: 200px; max-height: " >
                 <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
-				  <div class="card-body">
+				  <div class="card-body d-flex flex-column">
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
                   <p class="card-text">${beerDesc}</p>
-                  <button type="button" class="btn btn-primary beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
+                  <button type="button" class="btn btn-primary mt-auto beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
 				  </div>
         </div>`;
 	}

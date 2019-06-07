@@ -58,6 +58,14 @@ const handlePageClick = () => {
 	document.querySelector(`.page-link[data-page='${page}']`)
 		.parentElement.classList.add('active');
 }
+
+
+const handleSortClick = () => {
+	sortingOrder = event.target.value; 
+}
+
+document.querySelector('#dropdown').addEventListener('click', handleSortClick);
+
 //Function to display all key/values
 const modalInfo = (response) => {
 	let buffer = `<ul>`;

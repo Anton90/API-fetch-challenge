@@ -16,8 +16,9 @@ const selectArray = [
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
-// data container
+// data container and related
 let data = [];
+let sortingOrder = 'name';
 
 
 // Utility functions for user interaction
@@ -120,7 +121,6 @@ const beerPage = (data, page) => {
 	let subset = data.slice(begin, end);
 	console.log(subset);
 	beerCard(subset);
-
 
 	document.querySelectorAll('.beerDetail')
 		.forEach(bd => bd.addEventListener('click', (e) => showModal(e.target
@@ -256,7 +256,7 @@ const init = async () => {
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
 	data = await getAllBeers();
-
+	data.sort(sorter);
 	paginate(data, page);
 	beerPage(data, page);
 
@@ -268,12 +268,14 @@ init();
 
 
 
+const sorter = (a, b) => {
+	console.log("A: " + a.sortingOrder);
+	console.log("B: " + b.sortingOrder);
 
-const sorter = (criterion, a, b) => {
-	if (a.criterion > b.criterion) {
+	if (a.sortingOrder > b.sortingOrder) {
 		return 1;
 	}
-	if (a.criterion < b.criterion) {
+	if (a.sortingOrder < b.sortingOrder) {
 		return -1;
 	}
 	return 0;

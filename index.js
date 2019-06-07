@@ -241,11 +241,14 @@ document.querySelector('#reset').addEventListener('click', () => resultDiv.inner
 // Now do it!
 const init = async () => {
 
-	let page = 1;
-
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
 	data = await getAllBeers();
+	buildPage();
+};
+
+const buildPage = () => {
+	let page = 1;
 	data.sort(sorter);
 	paginate(data, page);
 	beerPage(data, page);

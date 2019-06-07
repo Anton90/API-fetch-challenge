@@ -13,6 +13,17 @@
 <body>
 	<button class="btn btn-primary m-2" type="submit" id="pickRandom">I feel lucky!</button>
 	<button class="btn btn-danger m-2" type="submit" id="reset">Reset</button>
+	<br>
+	<div class="dropdown">
+	  <button class="btn btn-secondary dropdown-toggle" type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	    Sort by
+	  </button>
+	  <div class="dropdown-menu" id="dropdown" aria-labelledby="dropdownMenuButton">
+	    <a class="dropdown-item" value="name">Name</a>
+	    <a class="dropdown-item" value="abv">Alcohol By Level</a>
+	    <a class="dropdown-item" value="ph">PH-level</a>
+	  </div>
+	</div>
 
 	<div id="modal">
 		<!-- content is generated-->

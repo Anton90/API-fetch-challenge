@@ -8,9 +8,9 @@ const modalDiv = document.querySelector('#modal');
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
+
 // Utility functions for user interaction
-const pickRandom = () =>
-{
+const pickRandom = () => {
 	fetch('https://api.punkapi.com/v2/beers/random')
 		.then((response) => response.json())
 		.then((response) => resultDiv.innerHTML =
@@ -20,11 +20,9 @@ const pickRandom = () =>
 document.querySelector('#pickRandom')
 	.addEventListener('click', pickRandom);
 
-const paginate = () =>
-{
+const paginate = () => {
 
-	for (let i = 1; i <= 5; i++)
-	{
+	for (let i = 1; i <= 5; i++) {
 		pagination.innerHTML +=
 			`<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
 	}
@@ -36,8 +34,7 @@ const paginate = () =>
 };
 
 
-const handlePageClick = () =>
-{
+const handlePageClick = () => {
 	const pageItems = document.querySelectorAll('.page-item');
 	let link = event.target;
 	let page = link.getAttribute('data-page');
@@ -46,13 +43,11 @@ const handlePageClick = () =>
 }
 
 // Function to collect info for modal and construct corresponding html
-const showModal = (id) =>
-{
+const showModal = (id) => {
 	let targetModal = document.querySelector(`#b${id}`);
 	fetch(beerLink(id))
 		.then((response) => response.json())
-		.then((response) =>
-		{
+		.then((response) => {
 			modalDiv.innerHTML +=
 				`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -79,12 +74,10 @@ const showModal = (id) =>
 
 
 // Function to generate main page content
-const beerPage = (page) =>
-{
+const beerPage = (page) => {
 	fetch(pageLink(page))
 		.then((response) => response.json())
-		.then((response) =>
-		{
+		.then((response) => {
 			cardsDiv.innerHTML = '';
 			beerCard(response);
 			document.querySelector(`.page-link[data-page='${page}']`)
@@ -96,38 +89,32 @@ const beerPage = (page) =>
 };
 
 // Function to construct a card for a beer
-const beerCard = (response) =>
-{
+const beerCard = (response) => {
 
-	for (let i = 0; i < response.length; i++)
-	{
+	for (let i = 0; i < response.length; i++) {
 
 		let imageSrc = response[i].image_url;
-		if (imageSrc == null)
-		{
+		if (imageSrc == null) {
 			imageSrc = "no-image.png";
 		}
 
 		let beerName = response[i].name;
-		if (beerName == "" || beerName == null)
-		{
+		if (beerName == "" || beerName == null) {
 			beerName = "";
 		}
 
 		let beerTag = response[i].tagline;
-		if (beerTag == "" || beerName == null)
-		{
+		if (beerTag == "" || beerName == null) {
 			beerTag = "";
 		}
 
 		let beerDesc = response[i].description;
-		if (beerDesc == "" || beerDesc == null)
-		{
+		if (beerDesc == "" || beerDesc == null) {
 			beerDesc = "";
 		}
 
 		cardsDiv.innerHTML += `
-				<div class="card" style="max-width: 200px; max-height: " >
+				<div class="card m-3" style="max-width: 200px; max-height: " >
                 <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				  <div class="card-body">
                   <h5 class="card-title">${beerName}</h5>
@@ -139,15 +126,38 @@ const beerCard = (response) =>
 	}
 };
 
-
+let allBeers = [];
+let allBeersCounter = 1;
+const getAllBeers = async () => {
+	let id = 1;
+	while (allBeersCounter != 404) {
+		try {
+			let result = fetch(beerLink(id));
+			let data = await result;
+			let jsonData = await data.json()
+			allBeers.push(jsonData);
+			console.log(jsonData);
+			id++;
+			allBeersCounter = jsonData[0].id;
+		}
+		catch (err) {
+			allBeersCounter = 404;
+			console.log(`STOP ${err}`);
+		}
+	}
+}
 
 
 // Now do it!
-const init = () =>
-{
+const init = () => {
 	let page = 1;
 	paginate(page);
 	beerPage(page);
+
+	getAllBeers();
+	console.log(allBeers);
 };
 
 init();
+
+

@@ -269,13 +269,13 @@ init();
 
 
 const sorter = (a, b) => {
-	console.log("A: " + a.sortingOrder);
-	console.log("B: " + b.sortingOrder);
+	console.log("A: " + a[sortingOrder]);
+	console.log("B: " + b[sortingOrder]);
 
-	if (a.sortingOrder > b.sortingOrder) {
+	if (a[sortingOrder] > b[sortingOrder]) {
 		return 1;
 	}
-	if (a.sortingOrder < b.sortingOrder) {
+	if (a[sortingOrder] < b[sortingOrder]) {
 		return -1;
 	}
 	return 0;

@@ -207,6 +207,7 @@ const randomBeer = () => {
         	showModal(e.target.getAttribute('data-id')));
 
 })
+}
 
 let allBeers = [];
 let allBeersCounter = 1;
@@ -214,11 +215,12 @@ const getAllBeers = async () => {
 	let id = 1;
 	while (allBeersCounter != 404) {
 		try {
-			let result = fetch(beerLink(id));
+			let result = fetch(pageLink(id));
 			let data = await result;
-			let jsonData = await data.json()
-			allBeers.push(jsonData);
+			let jsonData = await data.json();
+			jsonData.forEach((beer) => allBeers.push(beer));
 			console.log(jsonData);
+			console.log
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}

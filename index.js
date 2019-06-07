@@ -4,6 +4,13 @@ const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
 
+const selectArray = [
+	"name",
+	"abv",
+	'ph',
+	"hops",
+	"food-pairing"
+]; 
 
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
@@ -105,7 +112,6 @@ const showModal = (id) => {
 };
 
 
-
 // Function to generate main page content
 const beerPage = (data, page) => {
 
@@ -164,7 +170,7 @@ const beerCard = (response) => {
 
 //Function for random beercard
 const randomBeer = () => {
-	let rand = Math.floor(Math.random() * 325);
+	let rand = Math.floor(Math.random() * allBeers.length);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
@@ -211,7 +217,6 @@ const randomBeer = () => {
 		})
 }
 
-
 const getAllBeers = async () => {
 	let allBeers = [];
 	let allBeersCounter = 1;
@@ -222,8 +227,7 @@ const getAllBeers = async () => {
 			let data = await result;
 			let jsonData = await data.json();
 			jsonData.forEach((beer) => allBeers.push(beer));
-			console.log(jsonData);
-			console.log
+			//console.log(jsonData);
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}
@@ -231,9 +235,15 @@ const getAllBeers = async () => {
 			allBeersCounter = 'STOP';
 			console.log(`STOP ${err}`);
 		}
-	}
-	return allBeers;
-}
+	} 
+	return allBeers; 
+} 
+
+// const filter = () => {
+// 	selectArray.forEach
+// }
+
+
 
 document.querySelector('#pickRandom').addEventListener('click', randomBeer);
 document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
@@ -251,9 +261,11 @@ const init = async () => {
 	beerPage(data, page);
 
 	console.log(data);
+
 };
 
 init();
+
 
 
 const sorter = (a, b) => {

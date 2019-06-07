@@ -158,7 +158,7 @@ const beerCard = (response) => {
 
 //Function for random beercard
 const randomBeer = () => {
-	let rand = Math.floor(Math.random() * 325);
+	let rand = Math.floor(Math.random() * allBeers.length);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
@@ -209,27 +209,29 @@ const randomBeer = () => {
 })
 }
 
-let allBeers = [];
-let allBeersCounter = 1;
+
 const getAllBeers = async () => {
+	let allBeers = [];
+	let allBeersCounter = 1;
 	let id = 1;
-	while (allBeersCounter != 404) {
+	while (allBeersCounter != 'STOP') {
 		try {
 			let result = fetch(pageLink(id));
 			let data = await result;
 			let jsonData = await data.json();
 			jsonData.forEach((beer) => allBeers.push(beer));
-			console.log(jsonData);
-			console.log
+			//console.log(jsonData);
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}
 		catch (err) {
-			allBeersCounter = 404;
+			allBeersCounter = 'STOP';
 			console.log(`STOP ${err}`);
 		}
-	}
-}
+	} 
+	return allBeers; 
+} 
+
 
 document.querySelector('#pickRandom').addEventListener('click', randomBeer);
 document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
@@ -241,7 +243,7 @@ const init = () => {
 	beerPage(page);
 
 	getAllBeers();
-	console.log(allBeers);
+	//console.log(allBeers);
 };
 
 init();

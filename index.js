@@ -4,6 +4,13 @@ const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
 
+const selectArray = [
+	"name",
+	"abv",
+	'ph',
+	"hops",
+	"food-pairing"
+]; 
 
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
@@ -102,7 +109,6 @@ const showModal = (id) => {
 		})
 	return;
 };
-
 
 
 // Function to generate main page content
@@ -211,7 +217,6 @@ const randomBeer = () => {
 		})
 }
 
-
 const getAllBeers = async () => {
 	let allBeers = [];
 	let allBeersCounter = 1;
@@ -233,6 +238,10 @@ const getAllBeers = async () => {
 	} 
 	return allBeers; 
 } 
+
+// const filter = () => {
+// 	selectArray.forEach
+// }
 
 
 
@@ -258,11 +267,13 @@ const init = async () => {
 init();
 
 
+
+
 const sorter = (criterion, a, b) => {
 	if (a.criterion > b.criterion) {
 		return 1;
 	}
-	if (a.criterion > b.criterion) {
+	if (a.criterion < b.criterion) {
 		return -1;
 	}
 	return 0;

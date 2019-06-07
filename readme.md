@@ -34,6 +34,9 @@ We made all functions and features as future-proof and defensive as possible.
 - Sort beers on: name, abv, ...
 - Add filters for: hops, food pairing, ...
 
+(We want to make these functions general, so it still works when choosing different values.
+So we weren't able to finish these ones yet.)
+
 ### Link
 
 https://anton90.github.io/API-fetch-challenge/

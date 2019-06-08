@@ -14,7 +14,7 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 let data = [];
 let sortingOrder = '';
 const pageLen = 12;
-let selectArray = []
+let sortArray = []
 
 
 const paginate = (data, page) =>
@@ -48,24 +48,25 @@ const handlePageClick = () =>
 
 
 //Function to capitalize first letter for dropdown menu
-const uCFirst = sentence => {
-  let words = sentence.split(/ |_/);
-  words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
-  return words.join(" ");
+const uCFirst = sentence => 
+{
+	let words = sentence.split(/ |_/);
+	words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
+	return words.join(" ");
 };
 
 //Function to add sort items to dropdown menu
-const addSortItems = () => {
-
-	selectArray.forEach(item => {
-			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
-		
+const addSortItems = () => 
+{
+	sortArray.forEach(item => {
+			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;	
 	}) 
 };
 
  
-
-const handleSortClick = () => {
+//Function to execute after selecting a sort item in the dropdown menu
+const handleSortClick = () => 
+{
 	sortingOrder = event.srcElement.id;  
 	let page = 1;
 	data.sort(sorter);
@@ -293,16 +294,19 @@ document.querySelector('#reset')
 dropdown
 	.addEventListener('click', handleSortClick);
 
-const fillSelectArray = () => {
-		let objectKeys = Object.keys(data[0]);
-		objectKeys.forEach(value => {
-			if (typeof(data[0][value]) != 'object') {
-				selectArray.push(value);
-				//console.log(data[0][value])
-			} return; 
-		}
-		);
-	//console.log(selectArray);  
+//Function to add items to dropdown-sort menu.
+// ==> not possible to sort on multiple values of key, so forEach() checks for that.
+const fillSortArray = () => 
+{
+	let objectKeys = Object.keys(data[0]);
+	objectKeys.forEach(value => {
+		if (typeof(data[0][value]) != 'object') {
+			sortArray.push(value);
+			//console.log(data[0][value])
+		} return; 
+	}
+	);
+	//console.log(sortArray);  
 }; 
 
 // Now do it!
@@ -313,7 +317,7 @@ const init = async () =>
 
 	data = await getAllBeers();
 	buildPage();
-	fillSelectArray(); 
+	fillSortArray(); 
 	addSortItems();
 
 	

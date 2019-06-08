@@ -14,18 +14,7 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 let data = [];
 let sortingOrder = '';
 const pageLen = 12;
-let selectArray = [
-	"name",
-	"abv",
-	"ebc",
-	"ph"
-];
-
-// const fillSelectArray = () => {
-
-// 	data.forEach(item => selectArray.push(item.id)); 
-// 	console.log(data); 
-// } 
+let selectArray = []
 
 
 const paginate = (data, page) =>
@@ -57,21 +46,24 @@ const handlePageClick = () =>
 		.parentElement.classList.add('active');
 }
 
+
 //Function to capitalize first letter for dropdown menu
 const uCFirst = sentence => {
-  let words = sentence.split(" ");
+  let words = sentence.split(/ |_/);
   words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
   return words.join(" ");
 };
 
-//Function to sort items
+//Function to add sort items to dropdown menu
 const addSortItems = () => {
+
 	selectArray.forEach(item => {
-		sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
+			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
+		
 	}) 
 };
 
-addSortItems(); 
+ 
 
 const handleSortClick = () => {
 	sortingOrder = event.srcElement.id;  
@@ -79,6 +71,7 @@ const handleSortClick = () => {
 	data.sort(sorter);
 	
 	beerPage(data, page); 
+	console.log(data)
 }
 
 
@@ -166,7 +159,7 @@ const beerPage = (data, page) =>
 // Function to construct a card for a beer
 const beerCard = (response) =>
 {
-	console.log(response[0]);
+	//console.log(response[0]);
 	for (let i = 0; i < response.length; i++)
 	{
 
@@ -281,7 +274,6 @@ const getAllBeers = async () =>
 			let jsonData = await data.json();
 			jsonData.forEach((beer) => allBeers.push(beer));
 			console.log(jsonData);
-			console.log
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}
@@ -301,6 +293,18 @@ document.querySelector('#reset')
 dropdown
 	.addEventListener('click', handleSortClick);
 
+const fillSelectArray = () => {
+		let objectKeys = Object.keys(data[0]);
+		objectKeys.forEach(value => {
+			if (typeof(data[0][value]) != 'object') {
+				selectArray.push(value);
+				//console.log(data[0][value])
+			} return; 
+		}
+		);
+	//console.log(selectArray);  
+}; 
+
 // Now do it!
 const init = async () =>
 {
@@ -309,6 +313,10 @@ const init = async () =>
 
 	data = await getAllBeers();
 	buildPage();
+	fillSelectArray(); 
+	addSortItems();
+
+	
 };
 
 
@@ -319,7 +327,7 @@ const buildPage = () =>
 	paginate(data, page);
 	beerPage(data, page);
 
-	console.log(data);
+	//console.log(data);
 };
 
 init();
@@ -327,8 +335,8 @@ init();
 
 const sorter = (a, b) =>
 {
-	console.log("A: " + a[sortingOrder]);
-	console.log("B: " + b[sortingOrder]);
+	//console.log("A: " + a[sortingOrder]);
+	//console.log("B: " + b[sortingOrder]);
 
 	if (a[sortingOrder] > b[sortingOrder])
 	{

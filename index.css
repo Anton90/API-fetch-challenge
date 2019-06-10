@@ -2,7 +2,7 @@ body {
    margin: 0;
    padding: 0;
    background-image: url('national-beer-day-ipa.jpg');
-   background-position: fixed;
+   background-attachment: fixed;
    background-size: cover;
    background-position: center;
 }
@@ -41,4 +41,8 @@ body {
 
 .card-text {
    font-size: 0.8em;
+}
+
+#amountTitle {
+	color: white;
 }

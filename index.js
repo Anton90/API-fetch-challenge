@@ -3,20 +3,24 @@ const resultDiv = document.querySelector('#result');
 const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
-const sortDropdown = document.querySelector("#dropdown");
+const sortDropdown = document.querySelector('#dropdown');
+const inputAmountPerPage = document.querySelector('#amountPerPage');
+const submitAmountPerPage = document.querySelector('#submitPageAmount'); 
 
 
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
+
 // data container and related
 let data = [];
 let sortingOrder = '';
-const pageLen = 12;
+let pageLen = 12;
 let sortArray = []
 
 
+//Function to display all page-numbers, based on the amount per page and total beers
 const paginate = (data, page) =>
 {
 	let total = data.length;
@@ -35,6 +39,7 @@ const paginate = (data, page) =>
 };
 
 
+//Function to execute after clicking a specific page number
 const handlePageClick = () =>
 {
 	const pageItems = document.querySelectorAll('.page-item');
@@ -55,6 +60,7 @@ const uCFirst = sentence =>
 	return words.join(" ");
 };
 
+
 //Function to add sort items to dropdown menu
 const addSortItems = () => 
 {
@@ -68,11 +74,19 @@ const addSortItems = () =>
 const handleSortClick = () => 
 {
 	sortingOrder = event.srcElement.id;  
-	let page = 1;
-	data.sort(sorter);
-	
-	beerPage(data, page); 
-	console.log(data)
+	pagination.innerHTML = "";
+	buildPage();
+}
+
+
+//Function to change the amount of beers shown on each page
+const changeAmountPerPage = () =>
+{
+	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "") {
+		pageLen = inputAmountPerPage.value;
+		pagination.innerHTML = ""; 
+		buildPage(); 
+	} return; 
 }
 
 
@@ -139,11 +153,9 @@ const showModal = (id) =>
 };
 
 
-
 // Function to generate main page content
 const beerPage = (data, page) =>
 {
-
 	cardsDiv.innerHTML = '';
 	let begin = (page - 1) * pageLen;
 	let end = page * pageLen;
@@ -154,8 +166,8 @@ const beerPage = (data, page) =>
 	document.querySelectorAll('.beerDetail')
 		.forEach(bd => bd.addEventListener('click', (e) => showModal(e.target
 			.getAttribute('data-id'))));
-
 };
+
 
 // Function to construct a card for a beer
 const beerCard = (response) =>
@@ -291,8 +303,11 @@ document.querySelector('#pickRandom')
 	.addEventListener('click', randomBeer);
 document.querySelector('#reset')
 	.addEventListener('click', () => resultDiv.innerHTML = "");
-dropdown
+sortDropdown
 	.addEventListener('click', handleSortClick);
+submitAmountPerPage
+	.addEventListener('click', changeAmountPerPage); 
+
 
 //Function to add items to dropdown-sort menu.
 // ==> not possible to sort on multiple values of key, so forEach() checks for that.
@@ -309,18 +324,16 @@ const fillSortArray = () =>
 	//console.log(sortArray);  
 }; 
 
+
 // Now do it!
 const init = async () =>
 {
-
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
 	data = await getAllBeers();
 	buildPage();
 	fillSortArray(); 
 	addSortItems();
-
-	
 };
 
 
@@ -330,11 +343,7 @@ const buildPage = () =>
 	data.sort(sorter);
 	paginate(data, page);
 	beerPage(data, page);
-
-	//console.log(data);
 };
-
-init();
 
 
 const sorter = (a, b) =>
@@ -353,3 +362,4 @@ const sorter = (a, b) =>
 	return 0;
 };
 
+init();

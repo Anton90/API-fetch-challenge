@@ -224,10 +224,8 @@ const randomBeer = () =>
 		.then((response) => response.json())
 		.then((response) =>
 		{
-
 			//beerCard(response); 
-			console.log(response);
-
+			//console.log(response);
 
 			let imageSrc = response[0].image_url;
 			if (imageSrc == null)
@@ -268,7 +266,6 @@ const randomBeer = () =>
 			document.querySelector('.beerDetail')
 				.addEventListener('click', (e) =>
 					showModal(e.target.getAttribute('data-id')));
-
 		})
 }
 
@@ -299,6 +296,7 @@ const getAllBeers = async () =>
 	return allBeers;
 }
 
+//Eventlisteners
 document.querySelector('#pickRandom')
 	.addEventListener('click', randomBeer);
 document.querySelector('#reset')
@@ -361,5 +359,6 @@ const sorter = (a, b) =>
 	}
 	return 0;
 };
+
 
 init();

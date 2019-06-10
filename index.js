@@ -5,7 +5,7 @@ const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
 const sortDropdown = document.querySelector('#dropdown');
 const inputAmountPerPage = document.querySelector('#amountPerPage');
-const submitAmountPerPage = document.querySelector('#submitPageAmount'); 
+const submitAmountPerPage = document.querySelector('#submitPageAmount');
 
 
 // API links
@@ -53,27 +53,30 @@ const handlePageClick = () =>
 
 
 //Function to capitalize first letter for dropdown menu
-const uCFirst = sentence => 
+const uCFirst = sentence =>
 {
 	let words = sentence.split(/ |_/);
-	words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
+	words = words.map(word => word.charAt(0)
+		.toUpperCase() + word.slice(1));
 	return words.join(" ");
 };
 
 
 //Function to add sort items to dropdown menu
-const addSortItems = () => 
+const addSortItems = () =>
 {
-	sortArray.forEach(item => {
-			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;	
-	}) 
+	sortArray.forEach(item =>
+	{
+		sortDropdown.innerHTML +=
+			`<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
+	})
 };
 
- 
+
 //Function to execute after selecting a sort item in the dropdown menu
-const handleSortClick = () => 
+const handleSortClick = () =>
 {
-	sortingOrder = event.srcElement.id;  
+	sortingOrder = event.srcElement.id;
 	pagination.innerHTML = "";
 	buildPage();
 }
@@ -82,11 +85,13 @@ const handleSortClick = () =>
 //Function to change the amount of beers shown on each page
 const changeAmountPerPage = () =>
 {
-	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "") {
+	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "")
+	{
 		pageLen = inputAmountPerPage.value;
-		pagination.innerHTML = ""; 
-		buildPage(); 
-	} return; 
+		pagination.innerHTML = "";
+		buildPage();
+	}
+	return;
 }
 
 
@@ -120,35 +125,31 @@ const modalInfo = (response) =>
 	return buffer;
 }
 
-
 // Function to collect info for modal and construct corresponding html
-const showModal = (id) =>
+const showModal = async (id) =>
 {
-	let targetModal = document.querySelector(`#b${id}`);
-	fetch(beerLink(id))
-		.then((response) => response.json())
-		.then((response) =>
-		{
-			modalDiv.innerHTML +=
-				`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-scrollable" role="document">
-					<div class="modal-content">
-				   	<div class="modal-header">
-							<h5 class="modal-title" id="b${id}Title">${response[0].name}</h5>
+	let result = fetch(beerLink(id));
+	let data = await result;
+	let jsonData = await data.json();
+	modalDiv.innerHTML +=
+		`<div class="modal fade hide" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="b${id}Title" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
+				   <div class="modal-header">
+							<h5 class="modal-title" id="b${id}Title">${jsonData[0].name}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				          	<span aria-hidden="true">&times;</span>
 				        	</button>
-				      </div>
-				      <div class="modal-body">
-				        ${modalInfo(response[0])}
-				      </div>
-						<div class="modal-footer">
+				   </div>
+				   <div class="modal-body">
+				        ${modalInfo(jsonData[0])}
+				   </div>
+					<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
 					</div>
 				</div>
-			</div>`;
-		})
+			</div>
+		</div>`;
 	return;
 };
 
@@ -211,6 +212,9 @@ const beerCard = (response) =>
                   <button type="button" class="btn btn-primary mt-auto beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
 				</div>
         	</div>`;
+
+		// Also make an empty modalcontainer
+		showModal(response[i].id);
 	}
 };
 
@@ -224,7 +228,7 @@ const randomBeer = () =>
 		.then((response) => response.json())
 		.then((response) =>
 		{
-			//beerCard(response); 
+			//beerCard(response);
 			//console.log(response);
 
 			let imageSrc = response[0].image_url;
@@ -304,23 +308,25 @@ document.querySelector('#reset')
 sortDropdown
 	.addEventListener('click', handleSortClick);
 submitAmountPerPage
-	.addEventListener('click', changeAmountPerPage); 
+	.addEventListener('click', changeAmountPerPage);
 
 
 //Function to add items to dropdown-sort menu.
 // ==> not possible to sort on multiple values of key, so forEach() checks for that.
-const fillSortArray = () => 
+const fillSortArray = () =>
 {
 	let objectKeys = Object.keys(data[0]);
-	objectKeys.forEach(value => {
-		if (typeof(data[0][value]) != 'object') {
+	objectKeys.forEach(value =>
+	{
+		if (typeof (data[0][value]) != 'object')
+		{
 			sortArray.push(value);
 			//console.log(data[0][value])
-		} return; 
-	}
-	);
-	//console.log(sortArray);  
-}; 
+		}
+		return;
+	});
+	//console.log(sortArray);
+};
 
 
 // Now do it!
@@ -330,12 +336,12 @@ const init = async () =>
 
 	data = await getAllBeers();
 	buildPage();
-	fillSortArray(); 
+	fillSortArray();
 	addSortItems();
 };
 
 
-const buildPage = () => 
+const buildPage = () =>
 {
 	let page = 1;
 	data.sort(sorter);

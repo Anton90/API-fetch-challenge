@@ -14,14 +14,19 @@
 	<button class="btn btn-danger m-2" type="submit" id="reset">Reset</button>
 	<br>
 	<div class="dropdown">
-		<button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<button class="btn btn-primary dropdown-toggle m-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			Sort by
 		</button>
 		<div class="dropdown-menu" id="dropdown" aria-labelledby="dropdownMenuButton">
-			<a class="dropdown-item" value="name">Name</a>
-			<a class="dropdown-item" value="abv">Alcohol By Level</a>
-			<a class="dropdown-item" value="ph">PH-level</a>
+			<!-- content is generated-->
+
 		</div>
+	</div>
+	<br>
+	<div class="ml-2">
+		<p id="amountTitle">Enter a number to change the amount of beers per page:</p>
+		<input type="number" id="amountPerPage" placeholder="Numbers only">
+		<button type="submit" class="btn btn-primary" id="submitPageAmount">Go</button>
 	</div>
 
 	<div id="modal">

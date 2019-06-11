@@ -2,7 +2,7 @@ body {
    margin: 0;
    padding: 0;
    background-image: url('national-beer-day-ipa.jpg');
-   background-position: fixed;
+   background-attachment: fixed;
    background-size: cover;
    background-position: center;
 }

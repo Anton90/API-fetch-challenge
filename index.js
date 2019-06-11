@@ -3,37 +3,29 @@ const resultDiv = document.querySelector('#result');
 const cardsDiv = document.querySelector('#cards');
 const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
-const sortDropdown = document.querySelector("#dropdown");
+const sortDropdown = document.querySelector('#dropdown');
+const inputAmountPerPage = document.querySelector('#amountPerPage');
+const submitAmountPerPage = document.querySelector('#submitPageAmount'); 
 
 
 // API links
 const pageLink = (page) => `https://api.punkapi.com/v2/beers?page=${page}&per_page=65`;
 const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 
+
 // data container and related
 let data = [];
 let sortingOrder = '';
-let selectArray = [
-	"name",
-	"abv",
-	"ebc",
-	"ph"
-];
+let pageLen = 12;
+let sortArray = [];
 
 
-// const fillSelectArray = () => {
-
-// 	data.forEach(item => selectArray.push(item.id)); 
-// 	console.log(data); 
-// } 
-
-
- 
-
-const pageLen = 50;
-const paginate = (data, page) => {
+//Function to display all page-numbers, based on the amount per page and total beers
+const paginate = (data, page) =>
+{
 	let total = data.length;
-	for (let i = 1; i <= Math.ceil(total / pageLen); i++) {
+	for (let i = 1; i <= Math.ceil(total / pageLen); i++)
+	{
 		pagination.innerHTML +=
 			`<li class="page-item"><span class="page-link" data-page="${i}">${i}</span></li>`;
 	}
@@ -47,7 +39,10 @@ const paginate = (data, page) => {
 };
 
 
-const handlePageClick = () => {
+//Function to execute after clicking a specific page number
+const handlePageClick = () =>
+{
+	modalDiv.innerHTML = ""; 
 	const pageItems = document.querySelectorAll('.page-item');
 	let link = event.target;
 	let page = link.getAttribute('data-page');
@@ -57,42 +52,70 @@ const handlePageClick = () => {
 		.parentElement.classList.add('active');
 }
 
+
 //Function to capitalize first letter for dropdown menu
-const uCFirst = sentence => {
-  let words = sentence.split(" ");
-  words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)); 
-  return words.join(" ");
+const uCFirst = sentence => 
+{
+	let words = sentence.split(/ |_/);
+	words = words.map(word => word.charAt(0)
+			.toUpperCase() + word.slice(1)); 
+	return words.join(" ");
 };
 
-//Function to sort items
-const addSortItems = () => {
-	selectArray.forEach(item => {
-		sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
+
+//Function to add sort items to dropdown menu
+const addSortItems = () => 
+{
+	sortArray.forEach(item => 
+	{
+			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;	
 	}) 
 };
 
-addSortItems(); 
-
-const handleSortClick = () => {
+ 
+//Function to execute after selecting a sort item in the dropdown menu
+const handleSortClick = () => 
+{
 	sortingOrder = event.srcElement.id;  
-	buildPage(); 
+	pagination.innerHTML = "";
+	buildPage();
+}
+
+
+//Function to change the amount of beers shown on each page
+const changeAmountPerPage = () =>
+{
+	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "") 
+	{
+		pageLen = inputAmountPerPage.value;
+		pagination.innerHTML = ""; 
+		buildPage(); 
+	} 
+	return; 
 }
 
 
 //Function to display all key/values
-const modalInfo = (response) => {
+const modalInfo = (response) =>
+{
 	let buffer = `<ul>`;
 	//console.log(response);
 
-	if (response != null) {
-		for (let [key, value] of Object.entries(response)) {
+	if (response != null)
+	{
+		for (let [key, value] of Object.entries(response))
+		{
 
-			if (value != null || value != "" || typeof (value) !== undefined) {
+			if (value != null || value != "" || typeof (value) !== undefined)
+			{
 
-				if (typeof (value) === 'object') {
+				if (typeof (value) === 'object')
+				{
 					buffer += `<li><b>${key}:</b>`;
 					buffer += `${modalInfo(value)}</li>`;
-				} else {
+				}
+				else
+				{
 					buffer += `<li><b>${key}</b>: ${value}</li>`;
 				}
 			}
@@ -104,23 +127,23 @@ const modalInfo = (response) => {
 
 
 // Function to collect info for modal and construct corresponding html
-const showModal = (id) => {
-	let targetModal = document.querySelector(`#b${id}`);
-	fetch(beerLink(id))
-		.then((response) => response.json())
-		.then((response) => {
-			modalDiv.innerHTML +=
-				`<div class="modal fade" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-scrollable" role="document">
-					<div class="modal-content">
+const showModal = async (id) =>
+{
+	let result = fetch(beerLink(id));
+	let data = await result;
+	let jsonData = await data.json();
+	modalDiv.innerHTML +=
+		`<div class="modal fade hide" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="b${id}Title" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable" role="document">
+				<div class="modal-content">
 				   	<div class="modal-header">
-							<h5 class="modal-title" id="b${id}Title">${response[0].name}</h5>
+							<h5 class="modal-title" id="b${id}Title">${jsonData[0].name}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				          	<span aria-hidden="true">&times;</span>
 				        	</button>
 				      </div>
 				      <div class="modal-body">
-				        ${modalInfo(response[0])}
+				        ${modalInfo(jsonData[0])}
 				      </div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -128,17 +151,16 @@ const showModal = (id) => {
 					</div>
 				</div>
 			</div>`;
-		})
 	return;
 };
 
 
 // Function to generate main page content
-const beerPage = (data, page) => {
-
+const beerPage = (data, page) =>
+{
 	cardsDiv.innerHTML = '';
 	let begin = (page - 1) * pageLen;
-	let end = page * pageLen - 1;
+	let end = page * pageLen;
 	let subset = data.slice(begin, end);
 	//console.log(subset);
 	beerCard(subset);
@@ -146,38 +168,44 @@ const beerPage = (data, page) => {
 	document.querySelectorAll('.beerDetail')
 		.forEach(bd => bd.addEventListener('click', (e) => showModal(e.target
 			.getAttribute('data-id'))));
-
 };
 
+
 // Function to construct a card for a beer
-const beerCard = (response) => {
+const beerCard = (response) =>
+{
 	//console.log(response[0]);
-	for (let i = 0; i < response.length; i++) {
+	for (let i = 0; i < response.length; i++)
+	{
 
 		let imageSrc = response[i].image_url;
-		if (imageSrc == null) {
+		if (imageSrc == null)
+		{
 			imageSrc = "no-image.png";
 		}
 
 		let beerName = response[i].name;
-		if (beerName == "" || beerName == null) {
+		if (beerName == "" || beerName == null)
+		{
 			beerName = "";
 		}
 
 		let beerTag = response[i].tagline;
-		if (beerTag == "" || beerName == null) {
+		if (beerTag == "" || beerName == null)
+		{
 			beerTag = "";
 		}
 
 		let beerDesc = response[i].description;
-		if (beerDesc == "" || beerDesc == null) {
+		if (beerDesc == "" || beerDesc == null)
+		{
 
 			beerDesc = "";
 		}
 
 		cardsDiv.innerHTML += `
-			<div class="card m-2" style="max-width: 200px; max-height: " >
-                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
+			<div class="card m-2" style="max-width: 400px;" >
+                <img class="card-img-top mt-4" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				<div class="card-body d-flex flex-column">
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
@@ -185,46 +213,54 @@ const beerCard = (response) => {
                   <button type="button" class="btn btn-primary mt-auto beerDetail" data-toggle="modal" data-target="#b${response[i].id}" data-id="${response[i].id}">Show me more</button>
 				</div>
         	</div>`;
+
+        // Also make an empty modalcontainer
+		showModal(response[i].id);
 	}
 };
 
 
 //Function for random beercard
-const randomBeer = () => {
+const randomBeer = () =>
+{
 	let rand = Math.floor(Math.random() * data.length);
 
 	fetch(`https://api.punkapi.com/v2/beers/${rand}`)
 		.then((response) => response.json())
-		.then((response) => {
-
+		.then((response) =>
+		{
 			//beerCard(response); 
-			console.log(response);
-
+			//console.log(response);
 
 			let imageSrc = response[0].image_url;
-			if (imageSrc == null) {
+			if (imageSrc == null)
+			{
 				imageSrc = "no-image.png";
 			}
 
 			let beerName = response[0].name;
-			if (beerName == "" || beerName == null) {
+			if (beerName == "" || beerName == null)
+			{
 				beerName = "";
 			}
 
 			let beerTag = response[0].tagline;
-			if (beerTag == "" || beerName == null) {
+			if (beerTag == "" || beerName == null)
+			{
 				beerTag = "";
 			}
 
 			let beerDesc = response[0].description;
-			if (beerDesc == "" || beerDesc == null) {
+			if (beerDesc == "" || beerDesc == null)
+			{
 				beerDesc = "";
 			}
 
 			resultDiv.innerHTML = `
-			<div class="card m-2" style="max-width: 400px; max-height: " >
-                <img class="card-img-top" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
+			<div class="card m-2" style="max-width: 400px;">
+                <img class="card-img-top mt-4" style="max-width: 100%;" src="${imageSrc}" alt="${beerName}">
 				<div class="card-body d-flex flex-column">
+						<h4>Your Lucky number: ${rand}</h4>
                   <h5 class="card-title">${beerName}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">${beerTag}</h6>
                   <p class="card-text">${beerDesc}</p>
@@ -232,76 +268,107 @@ const randomBeer = () => {
 				</div>
         	</div>`;
 
-			document.querySelector('.beerDetail').addEventListener('click', (e) =>
-				showModal(e.target.getAttribute('data-id')));
-
+			document.querySelector('.beerDetail')
+				.addEventListener('click', (e) =>
+					showModal(e.target.getAttribute('data-id')));
 		})
 }
 
-const getAllBeers = async () => {
+
+const getAllBeers = async () =>
+{
 	let allBeers = [];
 	let allBeersCounter = 1;
 	let id = 1;
-	while (allBeersCounter != 'STOP') {
-		try {
+	while (allBeersCounter != 'STOP')
+	{
+		try
+		{
 			let result = fetch(pageLink(id));
 			let data = await result;
 			let jsonData = await data.json();
 			jsonData.forEach((beer) => allBeers.push(beer));
-			//console.log(jsonData);
+			console.log(jsonData);
 			id++;
 			allBeersCounter = jsonData[0].id;
 		}
-		catch (err) {
+		catch (err)
+		{
 			allBeersCounter = 'STOP';
 			console.log(`STOP ${err}`);
 		}
-	} 
-	return allBeers; 
-} 
+	}
+	return allBeers;
+}
 
 
+//Eventlisteners
+document.querySelector('#pickRandom')
+	.addEventListener('click', randomBeer);
+document.querySelector('#reset')
+	.addEventListener('click', () => resultDiv.innerHTML = "");
+sortDropdown
+	.addEventListener('click', handleSortClick);
+submitAmountPerPage
+	.addEventListener('click', changeAmountPerPage); 
 
-document.querySelector('#pickRandom').addEventListener('click', randomBeer);
-document.querySelector('#reset').addEventListener('click', () => resultDiv.innerHTML = "")
-dropdown.addEventListener('click', handleSortClick);
+
+//Function to add items to dropdown-sort menu.
+// ==> not possible to sort on multiple values of key, so forEach() checks for that.
+const fillSortArray = () => 
+{
+	let objectKeys = Object.keys(data[0]);
+	objectKeys.forEach(value => 
+	{
+		if (typeof(data[0][value]) != 'object') 
+		{
+			sortArray.push(value);
+			//console.log(data[0][value])
+		} 
+		return; 
+	}
+	);
+	//console.log(sortArray);  
+}; 
 
 
 // Now do it!
-const init = async () => {
-	let page = 1;
+const init = async () =>
+{
 	cardsDiv.innerHTML = `<h3>Waiting for a truckload of beers! Hold on ...</h3>`;
 
 	data = await getAllBeers();
-	paginate(data, page);
 	buildPage();
+	fillSortArray(); 
+	addSortItems();
 };
 
 
-const buildPage = () => {
+
+const buildPage = () => 
+{
 	let page = 1;
 	data.sort(sorter);
+	paginate(data, page); 
 	beerPage(data, page);
-
-	//console.log(data);
-
 };
 
-init();
 
-
-
-const sorter = (a, b) => {
+const sorter = (a, b) =>
+{
 	//console.log("A: " + a[sortingOrder]);
 	//console.log("B: " + b[sortingOrder]);
-	//console.log(sortingOrder); 
 
-	if (a[sortingOrder] > b[sortingOrder]) {
+	if (a[sortingOrder] > b[sortingOrder])
+	{
 		return 1;
 	}
-	if (a[sortingOrder] < b[sortingOrder]) {
+	if (a[sortingOrder] < b[sortingOrder])
+	{
 		return -1;
 	}
 	return 0;
 };
- 
+
+init();
+

@@ -46,3 +46,7 @@ body {
 #amountTitle {
 	color: white;
 }
+
+.btn {
+	height: 40px;
+}

@@ -5,7 +5,7 @@ const pagination = document.querySelector('.pagination');
 const modalDiv = document.querySelector('#modal');
 const sortDropdown = document.querySelector('#dropdown');
 const inputAmountPerPage = document.querySelector('#amountPerPage');
-const submitAmountPerPage = document.querySelector('#submitPageAmount');
+const submitAmountPerPage = document.querySelector('#submitPageAmount'); 
 
 
 // API links
@@ -17,7 +17,7 @@ const beerLink = (id) => `https://api.punkapi.com/v2/beers/${id}`;
 let data = [];
 let sortingOrder = '';
 let pageLen = 12;
-let sortArray = []
+let sortArray = [];
 
 
 //Function to display all page-numbers, based on the amount per page and total beers
@@ -42,6 +42,7 @@ const paginate = (data, page) =>
 //Function to execute after clicking a specific page number
 const handlePageClick = () =>
 {
+	modalDiv.innerHTML = ""; 
 	const pageItems = document.querySelectorAll('.page-item');
 	let link = event.target;
 	let page = link.getAttribute('data-page');
@@ -53,30 +54,29 @@ const handlePageClick = () =>
 
 
 //Function to capitalize first letter for dropdown menu
-const uCFirst = sentence =>
+const uCFirst = sentence => 
 {
 	let words = sentence.split(/ |_/);
 	words = words.map(word => word.charAt(0)
-		.toUpperCase() + word.slice(1));
+			.toUpperCase() + word.slice(1)); 
 	return words.join(" ");
 };
 
 
 //Function to add sort items to dropdown menu
-const addSortItems = () =>
+const addSortItems = () => 
 {
-	sortArray.forEach(item =>
+	sortArray.forEach(item => 
 	{
-		sortDropdown.innerHTML +=
-			`<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;
-	})
+			sortDropdown.innerHTML += `<a class="dropdown-item" id="${item}">${uCFirst(item)}</a>`;	
+	}) 
 };
 
-
+ 
 //Function to execute after selecting a sort item in the dropdown menu
-const handleSortClick = () =>
+const handleSortClick = () => 
 {
-	sortingOrder = event.srcElement.id;
+	sortingOrder = event.srcElement.id;  
 	pagination.innerHTML = "";
 	buildPage();
 }
@@ -85,13 +85,13 @@ const handleSortClick = () =>
 //Function to change the amount of beers shown on each page
 const changeAmountPerPage = () =>
 {
-	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "")
+	if (inputAmountPerPage.value <= data.length && inputAmountPerPage.value != "") 
 	{
 		pageLen = inputAmountPerPage.value;
-		pagination.innerHTML = "";
-		buildPage();
-	}
-	return;
+		pagination.innerHTML = ""; 
+		buildPage(); 
+	} 
+	return; 
 }
 
 
@@ -125,6 +125,7 @@ const modalInfo = (response) =>
 	return buffer;
 }
 
+
 // Function to collect info for modal and construct corresponding html
 const showModal = async (id) =>
 {
@@ -135,21 +136,21 @@ const showModal = async (id) =>
 		`<div class="modal fade hide" id="b${id}" tabindex="-1" role="dialog" aria-labelledby="b${id}Title" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-scrollable" role="document">
 				<div class="modal-content">
-				   <div class="modal-header">
+				   	<div class="modal-header">
 							<h5 class="modal-title" id="b${id}Title">${jsonData[0].name}</h5>
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 				          	<span aria-hidden="true">&times;</span>
 				        	</button>
-				   </div>
-				   <div class="modal-body">
+				      </div>
+				      <div class="modal-body">
 				        ${modalInfo(jsonData[0])}
-				   </div>
-					<div class="modal-footer">
+				      </div>
+						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		</div>`;
+			</div>`;
 	return;
 };
 
@@ -213,7 +214,7 @@ const beerCard = (response) =>
 				</div>
         	</div>`;
 
-		// Also make an empty modalcontainer
+        // Also make an empty modalcontainer
 		showModal(response[i].id);
 	}
 };
@@ -228,7 +229,7 @@ const randomBeer = () =>
 		.then((response) => response.json())
 		.then((response) =>
 		{
-			//beerCard(response);
+			//beerCard(response); 
 			//console.log(response);
 
 			let imageSrc = response[0].image_url;
@@ -300,6 +301,7 @@ const getAllBeers = async () =>
 	return allBeers;
 }
 
+
 //Eventlisteners
 document.querySelector('#pickRandom')
 	.addEventListener('click', randomBeer);
@@ -308,25 +310,26 @@ document.querySelector('#reset')
 sortDropdown
 	.addEventListener('click', handleSortClick);
 submitAmountPerPage
-	.addEventListener('click', changeAmountPerPage);
+	.addEventListener('click', changeAmountPerPage); 
 
 
 //Function to add items to dropdown-sort menu.
 // ==> not possible to sort on multiple values of key, so forEach() checks for that.
-const fillSortArray = () =>
+const fillSortArray = () => 
 {
 	let objectKeys = Object.keys(data[0]);
-	objectKeys.forEach(value =>
+	objectKeys.forEach(value => 
 	{
-		if (typeof (data[0][value]) != 'object')
+		if (typeof(data[0][value]) != 'object') 
 		{
 			sortArray.push(value);
 			//console.log(data[0][value])
-		}
-		return;
-	});
-	//console.log(sortArray);
-};
+		} 
+		return; 
+	}
+	);
+	//console.log(sortArray);  
+}; 
 
 
 // Now do it!
@@ -336,16 +339,17 @@ const init = async () =>
 
 	data = await getAllBeers();
 	buildPage();
-	fillSortArray();
+	fillSortArray(); 
 	addSortItems();
 };
 
 
-const buildPage = () =>
+
+const buildPage = () => 
 {
 	let page = 1;
 	data.sort(sorter);
-	paginate(data, page);
+	paginate(data, page); 
 	beerPage(data, page);
 };
 
@@ -366,5 +370,5 @@ const sorter = (a, b) =>
 	return 0;
 };
 
-
 init();
+
